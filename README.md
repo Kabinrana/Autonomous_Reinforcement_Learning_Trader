@@ -1,2 +1,156 @@
 # Autonomous_Reinforcement_Learning_Trader
 Autonomous Reinforcement Learning Trader (ARLT) is a high-performance, PPO-based reinforcement learning system designed to consistently achieve 10x profit growth within a single trading day.  Nasdaq futures OHLC data, ensuring high-frequency execution, precision trading, and adaptive risk management.
+# RL Trading Environment and PPO Training
+
+Welcome to the **RL Trading Environment and PPO Training** project. This repository implements a custom Gymnasium trading environment along with a training pipeline using Stable Baselines3's PPO algorithm. The environment is designed to simulate realistic trading on a per-day basis using 1-minute OHLC data and supports both detailed ("human") and fast (non-rendering) modes. The model is trained on randomly sampled trading days to promote learning across diverse market conditions and to avoid overfitting to sequential data.
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [File Structure](#file-structure)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Training Instructions](#training-instructions)
+- [Evaluation and Logging](#evaluation-and-logging)
+- [Rendering Modes](#rendering-modes)
+- [License](#license)
+
+## Overview
+
+This project implements a reinforcement learning (RL) framework for trading. Key components include:
+
+- **Custom Trading Environment** (`trading_env.py`):  
+  - Loads and processes 1-minute OHLC market data.
+  - Computes technical indicators (EMA, Bollinger Bands, ATR).
+  - Supports realistic trade management, including profit target enforcement and margin-based position sizing.
+  - Randomly samples trading days to expose the agent to varied market conditions.
+  - Provides two render modes: 
+    - `"human"` for detailed candlestick charts with annotations.
+    - `"fast"` (or `None`) for training without rendering.
+
+- **Training Script** (`train.py`):  
+  - Loads parameters from a configurable `config.yaml`.
+  - Supports fine-tuning of an existing model with policy validation.
+  - Logs extensive training and evaluation metrics (reward distribution, Sharpe Ratio, maximum drawdown, etc.).
+  - Saves model checkpoints and final models with timestamped filenames.
+
+- **Configuration** (`config.yaml`):  
+  - Centralizes all project parameters (data paths, trading parameters, PPO hyperparameters, logging settings, etc.).
+  - Allows easy switching between experiments via an experiment name.
+
+- **Dependencies**:  
+  - Listed in `requirements.txt` to ensure compatibility and smooth execution.
+
+## Features
+
+- **Random Day Sampling:**  
+  Each episode uses a randomly selected trading day (from 35 days of pre-purchased data) to ensure varied market conditions and to avoid overfitting.
+
+- **Profit Target Enforcement:**  
+  Episodes terminate early with a bonus reward if the account equity reaches or exceeds a set profit target.
+
+- **Detailed and Fast Rendering:**  
+  The environment can render detailed candlestick charts (human mode) or disable rendering (fast mode) to speed up training.
+
+- **Modular Configuration and Logging:**  
+  All parameters are externalized in `config.yaml`. Experiment-specific logs, models, and evaluations are organized into separate directories.
+
+- **Fine-Tuning Support:**  
+  The training script automatically detects and loads existing models for further training (with policy compatibility checks).
+
+## File Structure
+```
+trading-rl-project/ 
+├── LICENSE # Open-source license file. 
+├── README.md # This file. 
+├── config.yaml # Configuration file for parameters and hyperparameters. 
+├── requirements.txt # List of Python dependencies. 
+├── train.py # Main training script. 
+├── trading_env.py # Custom Gymnasium environment for trading. 
+└── utils/ # (Optional) Additional utility modules. 
+        ├── init.py
+        └── evaluation_utils.py # (Optional) Functions for advanced evaluation metrics.
+```
+## Installation
+
+1. **Clone the Repository:**
+   ```bash
+     git clone https://github.com/your_username/trading-rl-project.git
+     cd trading-rl-project
+  
+2. Create and Activate a Virtual Environment:
+   
+   On macOS/Linux:
+     ```bash
+     python3 -m venv venv
+     source venv/bin/activate
+     ``` 
+   On Windows:
+     ```bash
+     python -m venv venv
+     venv\Scripts\activate
+     ```
+4. Install Dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+## Configuration
+All configurable parameters are located in the config.yaml file. Key sections include:
+
+ * Data Configuration:
+   - Set the path to your market data CSV file.
+
+ * Trading Parameters:
+   - Define the initial account balance, profit target, margin requirements, and commission.
+
+ * Environment Settings:
+   - Configure the render mode ("human" for detailed charts or "fast" for no rendering), observation space dynamics, and supported timeframes.
+
+ * PPO Hyperparameters:
+   - Adjust learning rate, batch size, total training timesteps, etc.
+
+ * Logging Settings:
+   - Set the default experiment name and directories for models, evaluations, and logs.
+
+## Training Instructions
+To begin training the model, navigate to the repository root and run one of the following commands:
+
+ * Default Training (using settings in config.yaml):
+     ```bash
+     python train.py
+     ```
+ * Override Total Timesteps (for quick tests or debugging):
+     ```bash
+     python train.py --timesteps 10000
+     ```
+ * Fine-Tune an Existing Model:
+    ```bash
+    python train.py --model_path models/default_experiment/final_ppo_model.zip
+    ```
+ * Specify a Custom Experiment Name:
+    ```bash
+    python train.py --experiment "my_experiment"
+    ```
+## Evaluation and Logging
+During training, checkpoints and evaluation logs will be saved under:
+ * ```models/<experiment_name>/```
+ * ```evals/<experiment_name>/```
+ * ```logs/<experiment_name>/```
+
+After training, the script outputs key metrics such as Mean Reward, Standard Deviation, Sharpe Ratio, and Maximum Drawdown. A reward distribution plot is saved to help diagnose training stability.
+
+## Rendering Modes
+ * Human Mode:
+    If "render_mode": "human" is set in config.yaml (or passed via environment arguments), the environment will continuously render a detailed candlestick chart with technical indicators and annotated trade points during     each step. This mode is useful for demonstration and debugging but may slow training.
+
+ * Fast Mode:
+    If "render_mode": "fast" (or left as None), no rendering occurs. This mode is recommended for efficient training.
+
+## License
+This project is licensed under the terms specified in the LICENSE file.
+
+## Final Notes
+Ensure that your market data CSV file is formatted correctly with at least the following columns: Date, Open, High, Low, Close. For any questions or further assistance, please refer to the project documentation or contact the repository maintainer.
+
+# Happy Training!
