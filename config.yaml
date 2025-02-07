@@ -1,0 +1,45 @@
+# Configuration file for trading environment and model training
+
+# Data Configuration
+data_path: "/Users/Damia/OneDrive/Documents/futures_trading/cleanedNQ1minCandleData.csv"  # Path to the dataset
+
+# Trading Parameters
+trading:
+  initial_balance: 500.0        # Starting account balance
+  target_balance: 5000.0        # Profit target to end episode
+  margin_requirement: 100.0     # Margin required per contract
+  commission: 1.00              # Commission per contract
+
+# Environment Settings
+environment:
+  observation_space_dynamic: true  # Automatically adjust observation space if new features are added
+  timeframes: ["1m", "5m", "1h"]     # Supported timeframes
+  enable_logging: true              # Enable debug-level logging
+  render_mode: "human"               # Render mode: "human" for detailed charts, "fast" for minimal logging
+
+# Reward Function Settings
+reward:
+  clipping: false           # Disable fixed [-1,1] clipping
+  max_pnl_factor: 10        # Dynamic reward scaling based on profit/loss
+
+# PPO Hyperparameters (used in train.py)
+ppo:
+  learning_rate: 0.0003
+  n_steps: 2048
+  batch_size: 64
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  total_timesteps: 500000   # Total training timesteps
+
+# Checkpoint & Logging Settings
+logging:
+  experiment_name: "default_experiment"   # Default experiment name
+  model_dir: "models/"      # Directory to save model checkpoints (organized by experiment)
+  eval_dir: "evals/"        # Directory to save evaluation logs and best models (organized by experiment)
+  log_dir: "logs/"          # Directory to store general logs (organized by experiment)
+  save_model_freq: 10000    # Save model checkpoint every N timesteps
+  eval_freq: 5000           # Evaluate model every N timesteps
