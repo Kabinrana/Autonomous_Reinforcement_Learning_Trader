@@ -14,6 +14,7 @@ Welcome to the **RL Trading Environment and PPO Training** project. This reposit
 - [Training Instructions](#training-instructions)
 - [Evaluation and Logging](#evaluation-and-logging)
 - [Rendering Modes](#rendering-modes)
+- [Logical Flow and Expected Outcomes](#Logical-Flow-and-Expected-Outcomes)
 - [License](#license)
 
 ## Overview
@@ -146,6 +147,33 @@ After training, the script outputs key metrics such as Mean Reward, Standard Dev
 
  * Fast Mode:
     If "render_mode": "fast" (or left as None), no rendering occurs. This mode is recommended for efficient training.
+
+
+## Logical Flow and Expected Outcomes
+1. Training Flow:
+     * **Data Loading & Preprocessing:**
+        * The environment loads a CSV file containing 1-minute OHLC data. The "Date" column is converted to datetime objects (handling formats like "MM/DD/YYYY HH:MM:SS"). Technical indicators (EMA, Bollinger Bands, ATR)           are computed, and normalization statistics are calculated.
+     * **Episode Reset:**
+        * Each episode randomly selects one trading day from the dataset (ensuring non-sequential training). Trading parameters (balance, positions) are reset.
+     * **Step Function:**
+        * For every time step (minute), the environment processes the agent’s action:
+          * Buy/Sell: Closes any opposing position, then opens a new position using available free margin.
+          * Hold: Maintains the current position.
+          * Close All: Liquidates any open position. The environment calculates realized and unrealized PnL, updates the balance, and adds bonus rewards if the target balance is reached.
+     * **Termination:**
+        * The episode terminates when the end of the day is reached or when the profit target is achieved.
+2. Rendering Flow (Human Mode):
+     * When render_mode is set to "human", the environment uses Matplotlib to render a candlestick chart:
+          * The x-axis displays actual time converted from the "Date" column (formatted as hour:minute).
+          * Each candlestick represents one minute of trading data.
+          * Trade markers are plotted at the exact time and price where trades were executed.
+          * The chart is updated at each step.
+     * In "fast" mode (or if render_mode is None), no rendering occurs—ensuring training speed is maximized.
+3. Expected Outcomes:
+     * During Training:
+        The RL agent receives observations that include normalized market data and account metrics. Episodes end at the end of a trading day or upon reaching the profit target. In human mode, you should see an updating           candlestick chart that accurately reflects the time from your CSV file, with trade markers at the correct time positions.
+     * Post-Training:
+        The model should generalize across randomly sampled days, continuously transferring learning between episodes. Evaluation metrics (such as profit target attainment, reward distribution, etc.) will be computed and         logged.
 
 ## License
 This project is licensed under the terms specified in the LICENSE file.
