@@ -1,6 +1,5 @@
 # Autonomous_Reinforcement_Learning_Trader
-Autonomous Reinforcement Learning Trader (ARLT) is a high-performance, PPO-based reinforcement learning system designed to consistently achieve 10x profit growth within a single trading day.  Nasdaq futures OHLC data, ensuring high-frequency execution, precision trading, and adaptive risk management.
-# RL Trading Environment and PPO Training
+Autonomous Reinforcement Learning Trader (ARLT) is a high-performance, PPO-based reinforcement learning system designed to consistently achieve 10x profit growth within a single trading day. Utilizes a custom built gymnasium reinforcement learning envrionment to train a PPO model to aim to achieve the desired target balance. 
 
 Welcome to the **RL Trading Environment and PPO Training** project. This repository implements a custom Gymnasium trading environment along with a training pipeline using Stable Baselines3's PPO algorithm. The environment is designed to simulate realistic trading on a per-day basis using 1-minute OHLC data and supports both detailed ("human") and fast (non-rendering) modes. The model is trained on randomly sampled trading days to promote learning across diverse market conditions and to avoid overfitting to sequential data.
 
